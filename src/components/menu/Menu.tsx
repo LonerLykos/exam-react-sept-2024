@@ -1,8 +1,6 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../redux/store.ts";
-import {useEffect} from "react";
 import {authSliceActions} from "../../redux/auth-slice/authSlice.ts";
-
 
 export const Menu = () => {
 
@@ -11,16 +9,10 @@ export const Menu = () => {
     const status = useAppSelector((state) => state.auth.isAuthenticated)
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const authStatus = sessionStorage.getItem("isAuthenticated") === "true";
-        const userData = JSON.parse(sessionStorage.getItem("userWithToken") || "{}");
-        if (authStatus) {
-            dispatch(authSliceActions.login(userData));
-        } else {
-            dispatch(authSliceActions.logout());
-        }
-    }, [dispatch]);
-
+    const handleLogout = () => {
+        dispatch(authSliceActions.logout());
+        navigate("/login");
+    }
 
     return (
         <div>
@@ -29,14 +21,7 @@ export const Menu = () => {
                     <img src={userWithToken.image} alt="userPhoto"/>
                     <ul>
                         <li>
-                            <button onClick={() => {
-                                sessionStorage.removeItem("isAuthenticated");
-                                sessionStorage.removeItem("userWithToken");
-                                dispatch(authSliceActions.logout());
-                                navigate("/");
-                            }}>
-                                Logout
-                            </button>
+                            <button onClick={handleLogout}>Logout</button>
                         </li>
                         <li><Link to={'/'}>Main</Link></li>
                         <li><Link to={'/users'}>Users</Link></li>

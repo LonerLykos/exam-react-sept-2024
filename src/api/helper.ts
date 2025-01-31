@@ -1,13 +1,9 @@
-export const retriveLocalStorage = <T>(key: string) => {
+import {store} from "../redux/store.ts";
 
-    const object = localStorage.getItem(key) || '';
-    if (!object) {
-
-        return {} as T;
+export const getAuthInfo = <T>() => {
+    const userInfo = store.getState();
+    if (!userInfo) {
+        return null;
     }
-
-    const parse = JSON.parse(object);
-
-    return parse as T;
-
+    return userInfo.auth.user as T;
 }

@@ -14,7 +14,7 @@ export const FormLogin = () => {
     const [error, setError] = useState<boolean>(false);
     const [message, setMessage] = useState<string>('');
     const dispatch = useAppDispatch();
-    const state: boolean = useAppSelector((state) => state.auth.isAuthenticated);
+    const state = useAppSelector((state) => state.auth.isAuthenticated);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,13 +32,11 @@ export const FormLogin = () => {
                 const loginData: LoginData = {
                     username: currentData.username,
                     password: currentData.password,
-                    expiresInMins: 30,
+                    expiresInMins: 1,
                 };
 
                 const userWithToken = await login(loginData);
                 dispatch(authSliceActions.login(userWithToken));
-                sessionStorage.setItem("isAuthenticated", "true");
-                sessionStorage.setItem("userWithToken", JSON.stringify(userWithToken));
                 setError(false);
                 setMessage('');
                 reset();

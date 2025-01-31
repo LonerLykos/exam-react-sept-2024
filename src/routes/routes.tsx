@@ -1,12 +1,14 @@
-import { useRoutes } from "react-router-dom";
-import { lazy, Suspense } from "react";
-import { AppRoutes } from "./constants.ts";
+import {useRoutes} from "react-router-dom";
+import {lazy, Suspense} from "react";
+import {AppRoutes} from "./constants.ts";
+import UserDetailsPage from "../pages/UserDetailsPage.tsx";
+import {RecipeDetails} from "../components/recipes/recipe-details/RecipeDetails.tsx";
+import {FilterPage} from "../pages/FilterPage.tsx";
 
 const Main = lazy(() => import ('../pages/MainPage.tsx'));
 const Login = lazy(() => import ('../pages/LoginPage.tsx'));
-const Users =lazy(() => import ('../pages/UsersPage.tsx'));
+const Users = lazy(() => import ('../pages/UsersPage.tsx'));
 const Recipes = lazy(() => import ('../pages/RecipesPage.tsx'));
-
 
 
 export const RoutesComponent = () => useRoutes([
@@ -33,7 +35,13 @@ export const RoutesComponent = () => useRoutes([
                 <Users/>
             </Suspense>
         ),
-        path: AppRoutes.login,
+        path: AppRoutes.users,
+    },
+    {
+        element: (
+            <UserDetailsPage/>
+        ),
+        path: AppRoutes.userDetails
     },
     {
         element: (
@@ -41,8 +49,18 @@ export const RoutesComponent = () => useRoutes([
                 <Recipes/>
             </Suspense>
         ),
-        path: AppRoutes.login,
+        path: AppRoutes.recipes,
     },
-
-
+    {
+        element: (
+            <RecipeDetails/>
+        ),
+        path: AppRoutes.recipeDetails
+    },
+    {
+        element: (
+            <FilterPage/>
+        ),
+        path:AppRoutes.filter
+    }
 ]);

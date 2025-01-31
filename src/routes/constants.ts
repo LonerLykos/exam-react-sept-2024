@@ -1,12 +1,9 @@
 export const AppRoutes = {
     root: '/',
     login: '/login',
-    users: {
-        base: '/users',
-        children: ':id'
-    },
-    posts: {
-        base: 'posts',
-        children: ':id'
-    },
+    users: '/users',
+    userDetails: '/users/user/:id',
+    recipes: '/recipes',
+    recipeDetails: '/recipes/recipe/:id',
+    filter: '/recipes/:tag',
 };

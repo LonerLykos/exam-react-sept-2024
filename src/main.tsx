@@ -4,12 +4,17 @@ import {Provider} from "react-redux";
 import {BrowserRouter} from "react-router-dom";
 import {AppRoutes} from "./routes/constants.ts";
 import {MainLayout} from "./layouts/MainLayout.tsx";
-import {store} from "./redux/store.ts";
+import {persistor, store} from "./redux/store.ts";
+import {PersistGate} from "redux-persist/integration/react";
+import {Redirect} from "./components/redirect/Redirect.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
-        <BrowserRouter basename={AppRoutes.root}>
-            <MainLayout/>
-        </BrowserRouter>
+        <PersistGate loading={null} persistor={persistor}>
+            <BrowserRouter basename={AppRoutes.root}>
+                <MainLayout/>
+                <Redirect/>
+            </BrowserRouter>
+        </PersistGate>
     </Provider>
 )

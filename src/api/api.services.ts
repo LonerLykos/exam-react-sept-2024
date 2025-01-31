@@ -1,31 +1,25 @@
 import axios from 'axios';
-import {retriveLocalStorage} from "./helper.ts";
+import {getAuthInfo} from "./helper.ts";
 import {IUserInfoWithTokens} from "../models/user-with-token-model/IUserInfoWithToken.ts";
-import {IUser} from "../models/users-model/IUser.ts";
 import {IResponse} from "../models/response-model/IResponse.ts";
 import {ITokenPair} from "../models/token-model/ITokenPair.ts";
-import {IRecipes} from "../models/recipes-model/IRecipes.ts";
+import {store} from "../redux/store.ts";
+import {authSliceActions} from "../redux/auth-slice/authSlice.ts";
+import {baseUrl} from "../constants/urls.ts";
+import {redirectSliceActions} from "../redux/redirect-slice/redirectSlice.ts";
 
 export type LoginData = {
     username: string;
     password: string;
     expiresInMins: number
-}
+};
+
+
 
 const axiosInstance = axios.create({
-    baseURL: 'https://dummyjson.com/auth',
+    baseURL: baseUrl,
     headers: {}
 });
-
-axiosInstance.interceptors.request.use((requestObject) => {
-
-    if (requestObject.method?.toUpperCase() === 'GET') {
-
-        requestObject.headers.Authorization = 'Bearer ' + retriveLocalStorage<IUserInfoWithTokens>('user').accessToken
-    }
-    return requestObject;
-
-})
 
 export const login = async ({username, password, expiresInMins}: LoginData): Promise<IUserInfoWithTokens> => {
 
@@ -35,38 +29,67 @@ export const login = async ({username, password, expiresInMins}: LoginData): Pro
         expiresInMins
     });
 
-    localStorage.setItem('user', JSON.stringify(userWithTokens));
-
     return userWithTokens;
-}
+};
 
-export const loadAuthUsers = async (): Promise<IUser[]> => {
+axiosInstance.interceptors.request.use((requestObject) => {
+    const status = getAuthInfo<IUserInfoWithTokens>();
+    if(status) {
+        const token = status.accessToken
+        if (requestObject.method?.toUpperCase() === 'GET') {
+            requestObject.headers.Authorization = 'Bearer ' + token;
+        }
+    }
+    return requestObject;
+});
 
-    const {data: {users}} = await axiosInstance.get<IResponse & { users: IUser[] }>('/users');
+axiosInstance.interceptors.response.use(
+    response => response,
+    async error => {
+        const originalRequest = error.config;
 
-    return users
-}
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            try {
+                await refresh();
+                const iUserWithTokens = getAuthInfo<IUserInfoWithTokens>();
+                if (iUserWithTokens) {
+                    originalRequest.headers['Authorization'] = 'Bearer ' + iUserWithTokens.accessToken;
+                }
+                return axiosInstance(originalRequest);
+            } catch (refreshError) {
+                store.dispatch(redirectSliceActions.setRedirect('/login'));
+                store.dispatch(authSliceActions.logout());
+                return Promise.reject(refreshError);
+            }
+        }
 
-export const loadAuthRecipes = async (): Promise<IRecipes[]> => {
+        return Promise.reject(error);
+    }
+);
 
-    const {data: {posts}} = await axiosInstance.get<IResponse & { posts: IRecipes[] }>('/recipes');
 
-    return posts
-}
+export const allService = async <T, >(key: string, url: string) => {
+
+    const {data} = await axiosInstance.get<IResponse<T>>(url);
+
+    return data[key] as T;
+};
 
 export const refresh = async () => {
 
-    const iUserWithTokens = retriveLocalStorage<IUserInfoWithTokens>('user');
+    const iUserWithTokens = getAuthInfo<IUserInfoWithTokens>();
+
+    if (!iUserWithTokens) {
+        throw new Error('No authenication information');
+    }
 
     const {data: {accessToken, refreshToken}} = await axiosInstance.post<ITokenPair>('/refresh', {
         refreshToken: iUserWithTokens.refreshToken,
         expiresInMin: 30
     });
 
-    iUserWithTokens.accessToken = accessToken;
-    iUserWithTokens.refreshToken = refreshToken;
-
-    localStorage.setItem('user', JSON.stringify(iUserWithTokens));
+    store.dispatch(authSliceActions.updateTokens({accessToken, refreshToken}));
+};
 
 
-}
