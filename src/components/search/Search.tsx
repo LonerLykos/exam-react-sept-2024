@@ -45,8 +45,12 @@ export const Search = () => {
                         const filtredUser = users.filter(user => user.id.toString().includes(params));
                         dispatch(usersSliceActions.filtredUsers(filtredUser));
                     } else {
-                        const filtredUser = users.filter(user => user.firstName.includes(params));
-                        dispatch(usersSliceActions.filtredUsers(filtredUser));
+                        const filtredByFirstName = users.filter(user => user.firstName.toLowerCase().includes(params.toLowerCase()));
+                        const filtredByLastName = users.filter(user => user.lastName.toLowerCase().includes(params.toLowerCase()));
+                        const filtredAllUsers = [...new Map([...filtredByFirstName, ...filtredByLastName].map(item => [item.id, item])).values()];
+                        const filtredUsers = filtredAllUsers.sort((a, b) => a.id - b.id);
+
+                        dispatch(usersSliceActions.filtredUsers(filtredUsers));
                     }
                 }
                 break
@@ -58,7 +62,7 @@ export const Search = () => {
                         dispatch(recipesSliceActions.filtredRecipes(filtredRecipes));
 
                     } else {
-                        const filtredRecipes = recipes.filter(recipe => recipe.name.includes(params));
+                        const filtredRecipes = recipes.filter(recipe => recipe.name.toLowerCase().includes(params.toLowerCase()));
                         dispatch(recipesSliceActions.filtredRecipes(filtredRecipes));
                     }
                 }
