@@ -1,4 +1,4 @@
-import {RecipesList} from "../components/recipes/recipes-list/RecipesList.tsx";
+import {RecipesList} from "../../../components/recipes/recipes-list/RecipesList.tsx";
 
 
 const RecipesPage = () => {

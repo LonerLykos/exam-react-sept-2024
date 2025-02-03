@@ -1,6 +1,8 @@
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../redux/store.ts";
 import {authSliceActions} from "../../redux/auth-slice/authSlice.ts";
+import classNames from "classnames";
+import "./Menu.scss"
 
 export const Menu = () => {
 
@@ -14,21 +16,24 @@ export const Menu = () => {
         navigate("/login");
     }
 
+    const location = useLocation();
+    const isActive = (path: string) => location.pathname === path;
+
     return (
-        <div>
+        <div className={classNames('menu-wrapper', {'login': status}, {'unlogin': !status})}>
             {status && userWithToken ? (
                 <>
                     <img src={userWithToken.image} alt="userPhoto"/>
-                    <ul>
-                        <li>
+                    <ul className={classNames('navigate')}>
+                        <li className={classNames('pages')}>
                             <button onClick={handleLogout}>Logout</button>
                         </li>
-                        <li><Link to={'/'}>Main</Link></li>
-                        <li><Link to={'/users'}>Users</Link></li>
-                        <li><Link to={'/recipes'}>Recipes</Link></li>
+                        <li className={classNames('pages', {'active': isActive('/')})}><Link to={'/'}>Main</Link></li>
+                        <li className={classNames('pages', {'active': isActive('/users')})}><Link to={'/users'}>Users</Link></li>
+                        <li className={classNames('pages', {'active': isActive('/recipes')})}><Link to={'/recipes'}>Recipes</Link></li>
                     </ul>
                 </>
-            ) : (<p><Link to={'/login'}>Login</Link></p>)
+            ) : (<li className={classNames('pages', {'active': isActive('/login')})}><Link to={'/login'}>Login</Link></li>)
             }
         </div>
     )

@@ -1,4 +1,4 @@
-import {UsersList} from "../components/users/users-list/UsersList.tsx";
+import {UsersList} from "../../../components/users/users-list/UsersList.tsx";
 
 
 const UsersPage = () => {

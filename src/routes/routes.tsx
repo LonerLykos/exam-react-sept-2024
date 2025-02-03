@@ -1,14 +1,14 @@
 import {useRoutes} from "react-router-dom";
 import {lazy, Suspense} from "react";
 import {AppRoutes} from "./constants.ts";
-import UserDetailsPage from "../pages/UserDetailsPage.tsx";
+import UserDetailsPage from "../pages/users/user-details/UserDetailsPage.tsx";
 import {RecipeDetails} from "../components/recipes/recipe-details/RecipeDetails.tsx";
-import {FilterPage} from "../pages/FilterPage.tsx";
+import {FilterPage} from "../pages/filter/FilterPage.tsx";
 
-const Main = lazy(() => import ('../pages/MainPage.tsx'));
-const Login = lazy(() => import ('../pages/LoginPage.tsx'));
-const Users = lazy(() => import ('../pages/UsersPage.tsx'));
-const Recipes = lazy(() => import ('../pages/RecipesPage.tsx'));
+const Main = lazy(() => import ('../pages/main/MainPage.tsx'));
+const Login = lazy(() => import ('../pages/login/LoginPage.tsx'));
+const Users = lazy(() => import ('../pages/users/users-list/UsersPage.tsx'));
+const Recipes = lazy(() => import ('../pages/recipes/recipes-list/RecipesPage.tsx'));
 
 
 export const RoutesComponent = () => useRoutes([

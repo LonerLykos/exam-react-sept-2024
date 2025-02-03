@@ -8,9 +8,10 @@ type RecipeSliceType = {
     recipes: IRecipes[];
     selectedRecipe: IRecipes | null;
     selectedTag: string | null;
+    filtredRecipes: IRecipes[];
 };
 
-const initialState: RecipeSliceType = {recipes: [], selectedRecipe: null, selectedTag: null};
+const initialState: RecipeSliceType = {recipes: [], selectedRecipe: null, selectedTag: null, filtredRecipes: []};
 
 const loadRecipes = createAsyncThunk("loadRecipes", async (_, thunkAPI) => {
     try {
@@ -30,6 +31,12 @@ export const recipeSlice = createSlice({
         },
         setSelectedTag: (state, action: PayloadAction<string>) => {
             state.selectedTag = action.payload;
+        },
+        filtredRecipes: (state, action: PayloadAction<IRecipes[]>) => {
+            state.filtredRecipes = action.payload;
+        },
+        clearFilteredRecipes: (state) => {
+            state.filtredRecipes = [];
         }
     },
     extraReducers: builder => builder

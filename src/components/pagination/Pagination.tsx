@@ -1,4 +1,6 @@
 import {FC} from "react";
+import "./Pagination.scss"
+import classNames from "classnames";
 
 interface PaginationProps {
     totalItems: number;
@@ -8,7 +10,7 @@ interface PaginationProps {
 }
 
 export const Pagination: FC<PaginationProps> = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
-    const totalPages = totalItems / itemsPerPage;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const handleClick = (page: number) => {
         if (page > 0 && page <= totalPages) {
@@ -17,12 +19,12 @@ export const Pagination: FC<PaginationProps> = ({ totalItems, itemsPerPage, curr
     };
 
     return (
-        <div>
+        <div className={classNames('pagination-wrapper')}>
             <button onClick={() => handleClick(currentPage - 1)} disabled={currentPage === 1}>
                 Previous
             </button>
             {Array.from({ length: totalPages }, (_, index) => (
-                <button
+                <button className={classNames('number-page')}
                     key={index}
                     onClick={() => handleClick(index + 1)}
                     disabled={currentPage === index + 1}

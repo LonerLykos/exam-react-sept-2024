@@ -7,9 +7,10 @@ import {urls} from "../../constants/urls.ts";
 type UserSliceType = {
     users: IUser[];
     selectedUser: IUser | null;
+    filtredUsers: IUser[];
 };
 
-const initialState: UserSliceType = {users: [], selectedUser: null};
+const initialState: UserSliceType = {users: [], selectedUser: null, filtredUsers: []};
 
 const loadUsers = createAsyncThunk("loadUsers", async (_, thunkAPI) => {
     try {
@@ -26,6 +27,12 @@ export const userSlice = createSlice({
     reducers: {
         setSelectedUser: (state, action: PayloadAction<IUser>) => {
             state.selectedUser = action.payload;
+        },
+        filtredUsers: (state, action: PayloadAction<IUser[]>) => {
+            state.filtredUsers = action.payload;
+        },
+        clearFilteredUsers: (state) => {
+            state.filtredUsers = [];
         }
     },
     extraReducers: builder => builder

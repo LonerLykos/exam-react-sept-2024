@@ -1,4 +1,4 @@
-import {FilterByTag} from "../components/filter/FilterByTag.tsx";
+import {FilterByTag} from "../../components/recipes/recipe-filter/FilterByTag.tsx";
 
 export const FilterPage = () => {
 

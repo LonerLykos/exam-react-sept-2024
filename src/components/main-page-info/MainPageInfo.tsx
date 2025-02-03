@@ -1,17 +1,18 @@
-import {useAppSelector} from "../redux/store.ts";
+import {useAppSelector} from "../../redux/store.ts";
+import "./MainPageInfo.scss"
+import classNames from "classnames";
 
-const MainPage = () => {
-
+export const MainPageInfo = () => {
     const personalData = useAppSelector((state) => state.auth.user);
     const status = useAppSelector((state) => state.auth.isAuthenticated)
 
 
     return (
 
-        <div>
+        <div className={classNames('main-page-info-wrapper')}>
             {status && personalData ? (
                 <>
-                    <h1>Welcome {personalData.firstName} {personalData.lastName}</h1>
+                    <h1>Welcome <span>{personalData.firstName} {personalData.lastName}</span></h1>
                     <h2>Nice to see you again</h2>
                     <h3>Now you can start work</h3>
 
@@ -22,5 +23,3 @@ const MainPage = () => {
         </div>
     );
 };
-
-export default MainPage;
